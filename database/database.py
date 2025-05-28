@@ -10,14 +10,6 @@ db = {
             "hora_inicio": "18:00",
             "hora_fim": "19:00"
         }
-    ],
-    "salas": [
-        {
-            "id": 1,
-            "nome": "Sala 001",
-            "disponivel": True, 
-            "capacidade": 30
-        }
     ]
 }
 
