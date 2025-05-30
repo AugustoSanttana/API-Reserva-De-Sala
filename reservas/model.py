@@ -1,13 +1,32 @@
-from database.database import db
-from datetime import datetime
-from service import reservasService
+from database.database import DatabaseManager
+from reservas.services import reservasService
+from sqlalchemy import text
 
 class ModelReservas:
-    def get_reservas(self) -> list:
-        return db["reservas"]
+
+    def get_reservas(self):
+        sql = "SELECT * FROM reservas ORDER BY data, hora_inicio"
+        return DatabaseManager().select_all(sql)
 
     def criar_reserva(self, reserva: dict) -> dict:
-        db["reservas"].append(reserva)
+        sql = text("""
+            INSERT INTO reservas (turma_id, professor_id, sala, data, hora_inicio, hora_fim)
+            VALUES (:turma_id, :professor_id, :sala, :data, :hora_inicio, :hora_fim)
+            RETURNING id
+        """)
+
+        with DatabaseManager.engine.begin() as conn:
+            result = conn.execute(sql, {
+                "turma_id": reserva["turma_id"],
+                "professor_id": reserva["professor_id"],
+                "sala": reserva["sala"],
+                "data": reserva["data"],
+                "hora_inicio": reserva["hora_inicio"],
+                "hora_fim": reserva["hora_fim"]
+            })
+            reserva_id = result.fetchone()[0]
+
+        reserva["id"] = reserva_id
         return reserva
     
     def validar_entidades(self, turma_id: int, professor_id: int) -> dict:
@@ -21,13 +40,12 @@ class ModelReservas:
             return {"error": "Professor não existe"}
         
         return {}
+    
+    def get_turmas_disponiveis(self) -> list:
 
+        turmas = reservasService().get_turmas_disponiveis()
 
-"""from database.database import DatabaseManager
+        if not turmas:
+            return []
 
-class ModelReservas:
-    def __init__(self) -> None:
-        ...
-
-    def get_reservas(self):
-        return DatabaseManager().select_all("SELECT * FROM reservas")"""
+        return [turma for turma in turmas if turma["ativo"] == True]

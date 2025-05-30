@@ -1,25 +1,7 @@
-from datetime import date
-
-db = {
-    "reservas": [
-        {
-            "turma_id": 1,
-            "professor_id": 1,
-            "sala": 1,
-            "data": date(2025, 5, 10), 
-            "hora_inicio": "18:00",
-            "hora_fim": "19:00"
-        }
-    ]
-}
-
-
-
-
-"""from sqlalchemy import text
+from sqlalchemy import text
 from sqlalchemy.engine import create_engine
 
-engine = create_engine(url="postgresql://postgres:Az1310750412@177.81.186.211:5432/escola", enable_from_linting=False, echo=False)
+engine = create_engine(url="postgresql://postgres:Az1310750412@127.0.0.1:5432/reservas", enable_from_linting=False, echo=False)
  
 class DatabaseManager:
     
@@ -44,4 +26,4 @@ class DatabaseManager:
     def select_all(self, sql: str):
         with self.engine.begin() as conn:
             result = conn.execute(text(sql))
-            return result.fetchall()"""
+            return result.fetchall()
